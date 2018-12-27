@@ -1,0 +1,103 @@
+server:
+  port: 2222
+
+logging:
+  level:
+    root: WARN
+    org.springframework: INFO
+    org.springframework.security: INFO
+    com.nineswords.refinete.resource: DEBUG
+    com.nineswords.refinete.resource.task: INFO
+
+spring:
+  output:
+    ansi:
+      enabled: detect
+
+  application:
+    name: nine sowrds oauth
+
+  session:
+    store-type: redis
+
+  jpa:
+    show-sql: true
+    open-in-view: true
+    hibernate:
+      ddl-auto: update
+
+  cache:
+    type: redis
+
+  redis:
+    host: localhost
+    port: 6379
+    lettuce:
+      shutdown-timeout: 3000
+      pool:
+        max-active: 20
+        max-wait: 3000
+        max-idle: 5
+        min-idle: 1
+
+  quartz:
+    scheduler-name: refinete_scheduler
+    job-store-type: jdbc
+    properties:
+      org:
+        quartz:
+          scheduler:
+            instanceName: clusteredScheduler
+            instanceId: AUTO
+          jobStore:
+            class: org.quartz.impl.jdbcjobstore.JobStoreTX
+            driverDelegateClass: org.quartz.impl.jdbcjobstore.StdJDBCDelegate
+            tablePrefix: qrtz_
+            isClustered: true
+            clusterCheckinInterval: 10000
+            useProperties: false
+          threadPool:
+            class: org.quartz.simpl.SimpleThreadPool
+            threadCount: 10
+            threadPriority: 5
+            threadsInheritContextClassLoaderOfInitializingThread: true
+    jdbc:
+      initialize-schema: always
+      schema: "classpath:quartz_schema.sql"
+
+  task:
+    execution:
+      pool:
+        core-size: 8
+        max-size: 16
+        queue-capacity: 100
+        keep-alive: 10s
+
+
+  devtools:
+    livereload:
+      enabled: true
+      port: 13344
+
+security:
+  oauth2:
+    client:
+      client-id: testclient # 授权服务器配置的client id
+      client-secret: testclient # 授权服务器配置的client secret
+      scope: test
+      access-token-uri: ${nine.auth-server}/oauth/token # 获取access token接口
+      user-authorization-uri: ${nine.auth-server}/oauth/authorize #  获取Authorization Code接口
+    resource:
+      token-info-uri: ${nine.auth-server}/oauth/check_token # 验证token的接口
+      user-info-uri: ${nine.auth-server}/user # 一个可以获取认证授权的自定义接口，可以在授权服务器，也可以在其他服务器上
+      prefer-token-info: true # 如果同时配置了token-info-uri 和 user-info-uri，这个现象设置使用哪个取验证授权
+
+nine:
+  swagger:
+    enable: true
+  jwtSecret: "refinete@jwt|ss"
+  jwtExpiration: 604800 # 7 * 24 * 60 * 60
+  jwtHeader: "Authorization"
+  jwtTokenHead: "Bearer"
+  tokenStorePrefix: "refinete:auth:"
+  auth-server: http://localhost:8080 # 认证服务器地址
