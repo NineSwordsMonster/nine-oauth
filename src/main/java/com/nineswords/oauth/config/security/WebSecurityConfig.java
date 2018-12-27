@@ -79,43 +79,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity httpSecurity) throws Exception {
         httpSecurity
-                // 由于使用的是JWT，我们这里不需要csrf
-                .csrf().disable()
-                .httpBasic()
+                .requestMatchers().anyRequest()
                 .and()
-//                .exceptionHandling().authenticationEntryPoint(unauthorizedHandler).and()
-
-                // 基于token，所以不需要session
-                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
-
                 .authorizeRequests()
-                .antMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-
-                // 允许对于网站静态资源的无授权访问
-                .antMatchers(
-                        HttpMethod.GET,
-                        "/",
-                        "/*.html",
-                        "/favicon.ico",
-                        "/**/*.html",
-                        "/**/*.css",
-                        "/**/*.js",
-                        "/webjars/**",
-                        "/swagger-ui.html",
-                        "/v2/api-docs",
-                        "/swagger-resources/**",
-                        "/*/api-docs").permitAll()
-                // 对于获取token的rest api要允许匿名访问
-                .antMatchers("/nine/**").permitAll()
-                .antMatchers("/druid/**").hasRole("DBA")
-                // 除上面外的所有请求全部需要鉴权认证
-                .anyRequest().authenticated();
-
-        // 添加JWT filter
-//        httpSecurity
-//                .addFilterBefore(authenticationTokenFilterBean(), UsernamePasswordAuthenticationFilter.class);
-
-        // 禁用缓存
-        httpSecurity.headers().cacheControl();
+                .antMatchers("/nine/*").permitAll();
     }
 }
