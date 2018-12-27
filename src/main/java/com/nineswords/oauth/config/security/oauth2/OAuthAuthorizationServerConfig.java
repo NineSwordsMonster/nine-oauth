@@ -1,8 +1,11 @@
 package com.nineswords.oauth.config.security.oauth2;
 
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.crypto.factory.PasswordEncoderFactories;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.config.annotation.configurers.ClientDetailsServiceConfigurer;
 import org.springframework.security.oauth2.config.annotation.web.configuration.AuthorizationServerConfigurerAdapter;
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableAuthorizationServer;
@@ -20,8 +23,9 @@ import javax.sql.DataSource;
  * @author Jarvis.wang Erasme
  * @date 2018-12-16
  */
+@Configuration
 @EnableAuthorizationServer
-public class OAuth2AuthorizationServerConfig extends AuthorizationServerConfigurerAdapter {
+public class OAuthAuthorizationServerConfig extends AuthorizationServerConfigurerAdapter {
 
     @Resource
     private AuthenticationManager authenticationManager;
@@ -33,23 +37,46 @@ public class OAuth2AuthorizationServerConfig extends AuthorizationServerConfigur
     private DataSource dataSource;
 
     @Resource
-    private OauthClientDetailService oauthClientDetailService;
+    private PasswordEncoder passwordEncoder;
 
+    @Resource
+    private OAuthClientDetailService oauthClientDetailService;
+
+    /**
+     * 定义客户端详细信息服务的配置器。客户详细信息可以初始化，或者可以引用现有的 store
+     *
+     * @param clients
+     * @throws Exception
+     */
     @Override
     public void configure(ClientDetailsServiceConfigurer clients) throws Exception {
-        clients.jdbc(dataSource).withClient("nine-oauth");
+        clients.jdbc(dataSource).passwordEncoder(PasswordEncoderFactories.createDelegatingPasswordEncoder());
     }
 
+    /**
+     * 定义授权和令牌端点以及令牌服务
+     *
+     * @param endpoints
+     */
     @Override
     public void configure(AuthorizationServerEndpointsConfigurer endpoints) {
         endpoints
                 .tokenStore(tokenStore())
-                .pathMapping("/oauth/token", "/api/oauth/token")
+                .pathMapping("/oauth/token", "/nine/token")
+                .pathMapping("/oauth/authorize", "/nine/authorize")
+                .pathMapping("/oauth/check_token", "/nine/check_token")
+                .pathMapping("/oauth/error", "/nine/error")
+                .pathMapping("/oauth/confirm_access", "/nine/confirm_access")
                 .authenticationManager(authenticationManager)
                 .setClientDetailsService(oauthClientDetailService);
     }
 
-    /* 配置token获取合验证时的策略 */
+    /**
+     * 定义令牌端点上的安全约束
+     *
+     * @param security
+     * @throws Exception
+     */
     @Override
     public void configure(AuthorizationServerSecurityConfigurer security) throws Exception {
         security.tokenKeyAccess("permitAll()").checkTokenAccess("isAuthenticated()");

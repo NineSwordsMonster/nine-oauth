@@ -17,7 +17,7 @@ import javax.annotation.Resource;
  * @date 2018-12-27 11:29
  */
 @Service
-public class OauthClientDetailService implements ClientDetailsService {
+public class OAuthClientDetailService implements ClientDetailsService {
     @Resource
     private OauthClientDetailRepository oauthClientDetailRepository;
 
