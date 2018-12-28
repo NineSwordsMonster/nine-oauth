@@ -223,6 +223,11 @@
             <artifactId>querydsl-jpa</artifactId>
         </dependency>
 
+        <dependency>
+            <groupId>org.webjars</groupId>
+            <artifactId>webjars-locator-core</artifactId>
+        </dependency>
+
         <!-- https://mvnrepository.com/artifact/org.webjars.npm/vue -->
         <dependency>
             <groupId>org.webjars.npm</groupId>
@@ -263,8 +268,87 @@
     <build>
         <plugins>
             <plugin>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>remove</id>
+                        <phase>generate-sources</phase>
+                        <configuration>
+                            <tasks>
+                                <delete failonerror="false">
+                                    <fileset dir="${basedir}/src/main/resources/public/"  />
+                                </delete>
+                            </tasks>
+                        </configuration>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <version>1.6.0</version>
+                <executions>
+                    <execution>
+                        <id>yarn</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                        <configuration>
+                            <workingDirectory>${basedir}/frontend</workingDirectory>
+                            <executable>yarn </executable>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>yarn-build</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                        <configuration>
+                            <workingDirectory>${basedir}/frontend</workingDirectory>
+                            <executable>yarn </executable>
+                            <arguments>
+                                <argument>build</argument>
+                            </arguments>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <artifactId>maven-resources-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>copy-resources</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>
+                                ${basedir}/src/main/resources/public
+                            </outputDirectory>
+                            <resources>
+                                <resource>
+                                    <directory>
+                                        ${basedir}/frontend/dist
+                                    </directory>
+                                    <!--<filtering>true</filtering>-->
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
 
             <plugin>
@@ -277,6 +361,10 @@
                     </from>
                     <to>
                         <image>registry.hub.docker.com/uwangjia/nine-oauth</image>
+                        <auth>
+                            <!--<credHelper>osxkeychain</credHelper>-->
+
+                        </auth>
                     </to>
                 </configuration>
                 <executions>
@@ -307,6 +395,5 @@
             </plugin>
         </plugins>
     </build>
-
 
 </project>
