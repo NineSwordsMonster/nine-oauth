@@ -304,10 +304,11 @@
                             <goal>exec</goal>
                         </goals>
                         <configuration>
-                            <workingDirectory>${basedir}/frontend</workingDirectory>
+                            <workingDirectory>${basedir}/src/frontend</workingDirectory>
                             <executable>yarn </executable>
                         </configuration>
                     </execution>
+
                     <execution>
                         <id>yarn-build</id>
                         <phase>generate-sources</phase>
@@ -315,7 +316,7 @@
                             <goal>exec</goal>
                         </goals>
                         <configuration>
-                            <workingDirectory>${basedir}/frontend</workingDirectory>
+                            <workingDirectory>${basedir}/src/frontend</workingDirectory>
                             <executable>yarn </executable>
                             <arguments>
                                 <argument>build</argument>
@@ -325,31 +326,31 @@
                 </executions>
             </plugin>
 
-            <plugin>
-                <artifactId>maven-resources-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>copy-resources</id>
-                        <phase>generate-sources</phase>
-                        <goals>
-                            <goal>copy-resources</goal>
-                        </goals>
-                        <configuration>
-                            <outputDirectory>
-                                ${basedir}/src/main/resources/public
-                            </outputDirectory>
-                            <resources>
-                                <resource>
-                                    <directory>
-                                        ${basedir}/frontend/dist
-                                    </directory>
-                                    <!--<filtering>true</filtering>-->
-                                </resource>
-                            </resources>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
+            <!--<plugin>-->
+                <!--<artifactId>maven-resources-plugin</artifactId>-->
+                <!--<executions>-->
+                    <!--<execution>-->
+                        <!--<id>copy-resources</id>-->
+                        <!--<phase>generate-sources</phase>-->
+                        <!--<goals>-->
+                            <!--<goal>copy-resources</goal>-->
+                        <!--</goals>-->
+                        <!--<configuration>-->
+                            <!--<outputDirectory>-->
+                                <!--${basedir}/src/main/resources/public-->
+                            <!--</outputDirectory>-->
+                            <!--<resources>-->
+                                <!--<resource>-->
+                                    <!--<directory>-->
+                                        <!--${basedir}/frontend/dist-->
+                                    <!--</directory>-->
+                                    <!--&lt;!&ndash;<filtering>true</filtering>&ndash;&gt;-->
+                                <!--</resource>-->
+                            <!--</resources>-->
+                        <!--</configuration>-->
+                    <!--</execution>-->
+                <!--</executions>-->
+            <!--</plugin>-->
 
             <plugin>
                 <groupId>com.google.cloud.tools</groupId>

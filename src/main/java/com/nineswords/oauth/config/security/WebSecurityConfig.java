@@ -78,14 +78,22 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity httpSecurity) throws Exception {
-        httpSecurity
-                .requestMatchers().anyRequest()
+        httpSecurity.headers()
+                .contentTypeOptions().disable()
+                .frameOptions().sameOrigin();
+
+        httpSecurity.authorizeRequests()
+                .antMatchers("/nine/*").permitAll()
+                .antMatchers(
+                        "/css/**", "/js/**", "/img/**", "/webjars/**", "**/favicon.ico", "/index").permitAll()
+                .antMatchers("/user/**").hasRole("USER")
+                .and()
+                .formLogin()
+                .loginPage("/login").failureUrl("/login?error").permitAll()
+                .and()
+                .logout().permitAll()
                 .and()
                 .authorizeRequests()
-                .antMatchers("/nine/*").permitAll();
-
-        httpSecurity.authorizeRequests().anyRequest().fullyAuthenticated();
-        httpSecurity.formLogin().loginPage("/login").failureUrl("/login?error").permitAll();
-        httpSecurity.logout().permitAll();
+                .anyRequest().fullyAuthenticated();
     }
 }
