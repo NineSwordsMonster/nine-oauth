@@ -25,4 +25,5 @@
 /.nb-gradle/
 
 node_modules
-public
+
+./src/main/resources/public
