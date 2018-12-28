@@ -83,5 +83,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 .authorizeRequests()
                 .antMatchers("/nine/*").permitAll();
+
+        httpSecurity.authorizeRequests().anyRequest().fullyAuthenticated();
+        httpSecurity.formLogin().loginPage("/login").failureUrl("/login?error").permitAll();
+        httpSecurity.logout().permitAll();
     }
 }
