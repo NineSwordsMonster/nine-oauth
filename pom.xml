@@ -364,7 +364,8 @@
                         <image>registry.hub.docker.com/uwangjia/nine-oauth</image>
                         <auth>
                             <!--<credHelper>osxkeychain</credHelper>-->
-
+                            <username>uwangjia</username>
+                            <password>san.1415926</password>
                         </auth>
                     </to>
                 </configuration>
